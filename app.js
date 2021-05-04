@@ -5,6 +5,7 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var robotsRouter = require("./routes/robots");
 
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
@@ -13,13 +14,7 @@ var app = express();
 const adapter = new FileSync("data/db.json");
 const db = low(adapter);
 
-db.defaults({
-  id: [],
-  name: [],
-  heading: [],
-  PosX: [],
-  PosY: [],
-}).write();
+db.defaults({ robots: [] }).write();
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -29,5 +24,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/robots", robotsRouter);
 
 module.exports = app;

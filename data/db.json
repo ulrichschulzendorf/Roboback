@@ -1,7 +1,11 @@
 {
-  "id": [],
-  "name": [],
-  "heading": [],
-  "PosX": [],
-  "PosY": []
+  "robots": [
+    {
+      "name": "Abdullah",
+      "heading": "north",
+      "PosX": 0,
+      "PosY": 0,
+      "id": "1620131420869"
+    }
+  ]
 }
