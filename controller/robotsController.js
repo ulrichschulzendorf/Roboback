@@ -32,3 +32,108 @@ exports.deleteRobot = (req, res) => {
   db.get("robots").remove({ id: inputID }).write();
   res.status(200).send("Robot is gone!");
 };
+
+exports.rotateLeft = (req, res) => {
+  const robotID = req.body.id;
+  // const heading = req.body.heading;
+  // console.log(heading);
+  // const robot = db.get("robots").find({ id: robotID }).value();
+  const headingCheck = (heading) => {
+    switch (heading) {
+      case "north":
+        return (heading = "west");
+
+      case "west":
+        return (heading = "south");
+
+      case "south":
+        return (heading = "east");
+
+      case "east":
+        return (heading = "north");
+    }
+  };
+  const robots = db.get("robots").value();
+  let robot = robots.find((robot) => robot.id === robotID);
+  console.log(robot);
+
+  const newHeading = headingCheck(robot.heading);
+
+  db.get("robots")
+    .find({ id: robotID })
+    .assign({ heading: newHeading })
+    .write();
+
+  res.send(robot);
+};
+
+exports.rotateRight = (req, res) => {
+  const robotID = req.body.id;
+  // const heading = req.body.heading;
+  // console.log(heading);
+  // const robot = db.get("robots").find({ id: robotID }).value();
+  const headingCheck = (heading) => {
+    switch (heading) {
+      case "north":
+        return (heading = "east");
+
+      case "east":
+        return (heading = "south");
+
+      case "south":
+        return (heading = "west");
+
+      case "west":
+        return (heading = "north");
+    }
+  };
+  const robots = db.get("robots").value();
+  let robot = robots.find((robot) => robot.id === robotID);
+  console.log(robot);
+
+  const newHeading = headingCheck(robot.heading);
+
+  db.get("robots")
+    .find({ id: robotID })
+    .assign({ heading: newHeading })
+    .write();
+
+  res.send(robot);
+};
+
+exports.move = (req, res) => {
+  let robotName = req.body.name;
+  const robots = db.get("robots").value();
+  let robot = robots.find((robot) => robot.name === robotName);
+  let PosX = Number(robot.PosX);
+  let PosY = Number(robot.PosY);
+  switch (robot.heading) {
+    case "north":
+      db.get("robots")
+        .find({ name: robotName })
+        .assign({ PosY: PosY + 1 })
+        .write();
+      break;
+    case "east":
+      db.get("robots")
+        .find({ name: robotName })
+        .assign({ PosX: PosX + 1 })
+        .write();
+      break;
+    case "south":
+      db.get("robots")
+        .find({ name: robotName })
+        .assign({ PosY: PosY - 1 })
+        .write();
+      break;
+    case "west":
+      db.get("robots")
+        .find({ name: robotName })
+        .assign({ PosX: PosX - 1 })
+        .write();
+      break;
+    default:
+      null;
+  }
+  res.status(200).send(robot);
+};
