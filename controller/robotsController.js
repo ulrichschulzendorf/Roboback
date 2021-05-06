@@ -2,42 +2,76 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const adapter = new FileSync("data/db.json");
 const db = low(adapter);
+var isEmpty = require("lodash.isempty");
 
-exports.getRobots = (req, res) => {
-  const robots = db.get("robots").value();
-  res.status(200).send(robots);
+exports.getRobots = (req, res, next) => {
+  try {
+    if (isEmpty(req.body.name)) {
+      const error = new Error("INVALID REQUEST");
+      error.status = 400;
+      error.stack = error;
+      next(error);
+    } else {
+      const robots = db.get("robots").value();
+      res.status(200).send(robots);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 };
 
 exports.addRobot = (req, res) => {
-  //get body
-  const robots = req.body;
-  // get the db
-  db.get("robots")
-    //push the record
-    .push(robots)
-    //grab the last element
-    .last()
-    // and assign a id via a Date number
-    .assign({ id: Date.now().toString() })
-    //write it
-    .write();
-
-  // send back the new record
-  res.status(201).send(robots);
+  try {
+    if (isEmpty(req.body.name)) {
+      const error = new Error("INVALID REQUEST");
+      error.status = 400;
+      error.stack = error;
+      next(error);
+    } else {
+      //get body
+      const robots = req.body;
+      // get the db
+      db.get("robots")
+        //push the record
+        .push(robots)
+        //grab the last element
+        .last()
+        // and assign a id via a Date number
+        .assign({ id: Date.now().toString() })
+        //write it
+        .write();
+    }
+    // send back the new record
+    res.status(201).send(robots);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 };
 
 exports.deleteRobot = (req, res) => {
-  // delete a record
-  const inputID = req.body.id;
-  db.get("robots").remove({ id: inputID }).write();
-  res.status(200).send("Robot is gone!");
+  try {
+    if (isEmpty(req.body.name)) {
+      const error = new Error("INVALID REQUEST");
+      error.status = 400;
+      error.stack = error;
+      next(error);
+    } else {
+      // delete a record
+      const inputID = req.body.id;
+      db.get("robots").remove({ id: inputID }).write();
+      res.status(200).send("Robot is gone!");
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 };
 
 exports.rotateLeft = (req, res) => {
   const robotID = req.body.id;
-  // const heading = req.body.heading;
-  // console.log(heading);
-  // const robot = db.get("robots").find({ id: robotID }).value();
+
   const headingCheck = (heading) => {
     switch (heading) {
       case "north":

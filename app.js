@@ -6,6 +6,7 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var robotsRouter = require("./routes/robots");
+const { setCors } = require("./middleware/security");
 
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
@@ -21,6 +22,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(setCors);
+app.use((err, req, res, next) => {
+  res.status(500).send({
+    error: {
+      message: err.message,
+    },
+  });
+});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
