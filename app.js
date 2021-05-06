@@ -23,6 +23,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(setCors);
+
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
+app.use("/robots", robotsRouter);
+
 app.use((err, req, res, next) => {
   res.status(500).send({
     error: {
@@ -30,9 +35,4 @@ app.use((err, req, res, next) => {
     },
   });
 });
-
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/robots", robotsRouter);
-
 module.exports = app;
